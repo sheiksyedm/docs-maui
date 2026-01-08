@@ -1,7 +1,7 @@
 ---
 title: "Media picker for photos and videos"
 description: "Learn how to use the IMediaPicker interface in the Microsoft.Maui.Media namespace, to prompt the user to select or take a photo or video"
-ms.date: 12/16/2024
+ms.date: 12/22/2024
 no-loc: ["Microsoft.Maui", "Microsoft.Maui.Media", "MediaPicker"]
 ---
 
@@ -20,7 +20,12 @@ To access the media picker functionality, the following platform-specific setup 
 <!-- markdownlint-disable MD025 -->
 # [Android](#tab/android)
 
-The `CAMERA` permission is required and must be configured in the Android project. In addition:
+On Android, the Media Picker uses Intent-based capture when you call <xref:Microsoft.Maui.Media.MediaPicker.CapturePhotoAsync%2A> or <xref:Microsoft.Maui.Media.MediaPicker.CaptureVideoAsync%2A>. This launches the system camera app and **does not require** the `android.permission.CAMERA` permission.
+
+> [!IMPORTANT]
+> You only need to declare the `CAMERA` permission if you're implementing an in-app camera using Camera2 or CameraX APIs directly. If you do declare it without using a custom camera, add `<uses-feature android:name="android.hardware.camera" android:required="false" />` to your manifest to prevent Google Play from filtering out devices without cameras.
+
+For picking or capturing media, configure the following permissions:
 
 - If your app targets Android 12 or lower, you must request the `READ_EXTERNAL_STORAGE` and `WRITE_EXTERNAL_STORAGE` permissions.
 - If your app targets Android 13 or higher and needs access to media files that other apps have created, you must request one or more of the following granular media permissions instead of the `READ_EXTERNAL_STORAGE` permission:
@@ -44,7 +49,6 @@ These permissions can be added in the following ways:
   Open the _Platforms/Android/AndroidManifest.xml_ file and add the following in the `manifest` node:
 
   ```xml
-  <uses-permission android:name="android.permission.CAMERA" />
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />    
   <!-- Required only if your app needs to access images or photos that other apps created -->
@@ -59,7 +63,7 @@ These permissions can be added in the following ways:
 
 - Update the Android Manifest in the manifest editor:
 
-  In Visual Studio double-click on the *Platforms/Android/AndroidManifest.xml* file to open the Android manifest editor. Then, under **Required permissions** check the permissions listed above. This will automatically update the *AndroidManifest.xml* file.
+  In Visual Studio double-click on the *Platforms/Android/AndroidManifest.xml* file to open the Android manifest editor. Then, under **Required permissions** check the permissions listed above (excluding `CAMERA`). This will automatically update the *AndroidManifest.xml* file.
 
 If your project's Target Android version is set to **Android 11 (R API 30)** or higher, you must update your _Android Manifest_ with queries that use Android's [package visibility requirements](https://developer.android.com/preview/privacy/package-visibility).
 
